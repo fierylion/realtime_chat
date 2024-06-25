@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import ChatRoom, ChatMessage
-from .serializers import ChatMessageSerializer, ChatRoomSerializer
+from .models import ChatRoom, ChatMessage, ExpertUser
+from .serializers import ChatMessageSerializer, ChatRoomSerializer, ExpertUserSerializer
 from rest_framework import viewsets
 from utils.paginations import StandardResultsSetPagination
 from utils.filter_backend import default_filter_backends
@@ -46,3 +46,11 @@ class MessageViewSet(viewsets.ModelViewSet):
                     "results": [],
                 }, status=status.HTTP_200_OK)
         return super().list(request, *args, **kwargs)
+
+class ExpertUserViewSet(viewsets.ModelViewSet):
+    serializer_class = ExpertUserSerializer
+    queryset = ExpertUser.objects.all()
+    pagination_class = StandardResultsSetPagination
+    filter_backends = default_filter_backends
+    filterset_fields = ['expert_id']
+    

@@ -52,6 +52,7 @@ class RoomConsumers(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'error': message
             }))
+    
 
     @sync_to_async
     def create_room(self, room_name):
@@ -68,6 +69,20 @@ class RoomConsumers(AsyncWebsocketConsumer):
     @sync_to_async
     def save_message(self, text_data, room):
         from .serializers import ChatMessageSerializer
+        from .serializers import ExpertUserSerializer
+        from .models import ExpertUser
+        expert_id = room.split('_')[1]
+        if text_data['creator'] == 'user':
+            username= text_data["username"]
+            expert_user = ExpertUser.objects.filter(expert_id=expert_id, username=username)
+            if not expert_user:
+                expert_user = ExpertUserSerializer(data={'expert_id': expert_id, 'username': username})
+                if expert_user.is_valid():
+                    expert_user.save()
+                else:
+                    return expert_user.errors, False
+
+
         text_data['room'] = room
         chat = ChatMessageSerializer(data=text_data)
         if chat.is_valid():
