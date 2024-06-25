@@ -76,9 +76,9 @@ class RoomConsumers(AsyncWebsocketConsumer):
         
         if text_data['creator'] == 'user':
             username= text_data["username"]
-            expert_user = ExpertUser.objects.filter(expert_id=expert_id, username=username, user_id=user_id)
+            expert_user = ExpertUser.objects.filter(expert_id=expert_id, username=username, user_id=user_id, id=room)
             if not expert_user:
-                expert_user = ExpertUserSerializer(data={'expert_id': expert_id, 'username': username , 'user_id': user_id})
+                expert_user = ExpertUserSerializer(data={'expert_id': expert_id, 'username': username , 'user_id': user_id, id:room})
                 if expert_user.is_valid():
                     expert_user.save()
                 else:

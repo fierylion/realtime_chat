@@ -12,8 +12,8 @@ class ExpertUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpertUser
         fields=['id', 'expert_id', 'username', 'created_at']
-        read_only_fields = ['created_at', 'id']
-        
+        read_only_fields = ['created_at']
+
 
 
 class ChatMessageSerializer(serializers.ModelSerializer):
