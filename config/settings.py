@@ -89,7 +89,7 @@ ASGI_APPLICATION = 'config.asgi.application'
 DATABASES = {
     'default': config(
         'DATABASE_URL',
-        default='postgres://postgres:password@localhost:5431/chat_db',
+        default='postgres://postgres:password@localhost:5431/consultation_chat',
         cast=db_url,
     )
 }
