@@ -1,0 +1,47 @@
+version: '3.10'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: heslb_realtime_chat_db  # Explicitly name the PostgreSQL container
+    environment:
+      POSTGRES_DB: realtime_chat
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_heslb
+    expose:
+      - 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - realtime_messages_app_network
+
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: heslb_redis  # Explicitly name the Redis container
+    expose:
+      - 6379
+    networks:
+      - realtime_messages_app_network
+
+  web:
+    build: .
+    container_name: realtime_chat_app  # Explicitly name the web application container
+    command: >
+      sh -c "python manage.py migrate && daphne -b 0.0.0.0 -p 8010 config.asgi:application"
+    ports:
+      - "8010:8010"
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    networks:
+      - realtime_messages_app_network
+
+networks:
+  realtime_messages_app_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
