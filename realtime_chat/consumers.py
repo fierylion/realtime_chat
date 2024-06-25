@@ -29,7 +29,9 @@ class RoomConsumers(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
+        print(text_data)
         text_data_json = json.loads(text_data)
+        print(text_data_json)
 
         result = await self.save_message(text_data_json, self.room_name)
 
@@ -76,19 +78,23 @@ class RoomConsumers(AsyncWebsocketConsumer):
         
         if text_data['creator'] == 'user':
             username= text_data["username"]
-            expert_user = ExpertUser.objects.filter(expert_id=expert_id, username=username, user_id=user_id, id=room)
+            expert_user = ExpertUser.objects.filter(id=room).exists()
             if not expert_user:
-                expert_user = ExpertUserSerializer(data={'expert_id': expert_id, 'username': username , 'user_id': user_id, id:room})
+                expert_user = ExpertUserSerializer(data={"id":room,'expert_id': expert_id, 'username': username , 'user_id': user_id})
                 if expert_user.is_valid():
                     expert_user.save()
                 else:
+                
                     return expert_user.errors, False
 
 
         text_data['room'] = room
+   
         chat = ChatMessageSerializer(data=text_data)
         if chat.is_valid():
             chat.save()
+            print(chat.data)
             return chat.data, True
         else:
+        
             return chat.errors, False
